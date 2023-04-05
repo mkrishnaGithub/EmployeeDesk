@@ -15,8 +15,7 @@ namespace EmployeeDesk.Models
             [JsonPropertyName("data")]
             public List<Employee> data { get; set; }
         }
-
-        // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+        
         public class EmployeeData
         {
             public int id { get; set; }

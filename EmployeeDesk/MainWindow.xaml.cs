@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EmployeeDesk.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,7 @@ namespace EmployeeDesk
         public MainWindow()
         {
             InitializeComponent();
+            this.DataContext = new EmployeeViewModel();            
         }
     }
 }
