@@ -21,6 +21,7 @@ namespace EmployeeDesk.ViewModels
         #region Properties  
 
         Regex regexemail = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
+
         private List<Employee> _employees;
 
         public List<Employee> Employees
@@ -117,23 +118,8 @@ namespace EmployeeDesk.ViewModels
             set { SetProperty(ref _isUpdateDeleteBtnEnable, value); }
         }
 
-        //private string _showPostMessage = "Fill the form to register an employee!";
-
-        //public string ShowPostMessage
-        //{
-        //    get { return _showPostMessage; }
-        //    set { SetProperty(ref _showPostMessage, value); }
-        //}
         #endregion
-
-        #region ICommands  
-        public DelegateCommand GetButtonClicked { get; set; }
-        public DelegateCommand ShowRegistrationForm { get; set; }
-        public DelegateCommand PostButtonClick { get; set; }
-        public DelegateCommand<Employee> UpdateButtonClicked { get; set; }
-        public DelegateCommand<Employee> DeleteButtonClicked { get; set; }
-        public DelegateCommand DataGridRowSelected { get; set; }
-
+        #region Validations
         public string Error { get { return null; } }
 
         public string this[string paramName]
@@ -143,39 +129,47 @@ namespace EmployeeDesk.ViewModels
                 string result = null;
                 switch (paramName)
                 {
-                    case "Name" :
+                    case "Name":
                         if (string.IsNullOrEmpty(Name) || string.IsNullOrWhiteSpace(Name))
                         {
-                            result = "Employee name cannot be empty";                            
+                            result = "Employee name cannot be empty";
                         }
-                        
                         break;
                     case "Email":
-                      
                         if (string.IsNullOrEmpty(Email) || (!string.IsNullOrEmpty(Email) && !regexemail.IsMatch(Email)))
                         {
-                            result = "Email should be valid one";                           
-                        }                        
+                            result = "Email should be valid one";
+                        }
                         break;
                 }
-                IsPostBtnEnable= CheckPostButtonEnable();
+                IsPostBtnEnable = CheckPostButtonEnable();  //To enable the save button only when valid data exist
                 return result;
             }
         }
         #endregion
 
-        #region Constructor          
+        #region ICommands
+        public DelegateCommand GetButtonClicked { get; set; }
+        public DelegateCommand ShowRegistrationForm { get; set; }
+        public DelegateCommand PostButtonClick { get; set; }
+        public DelegateCommand<Employee> UpdateButtonClicked { get; set; }
+        public DelegateCommand<Employee> DeleteButtonClicked { get; set; }
+        public DelegateCommand DataGridRowSelected { get; set; }
+      
+        #endregion
+
+                 
         public EmployeeViewModel()
         {
             GetEmployeeDetails();
             GetButtonClicked = new DelegateCommand(GetEmployeeDetails);
             UpdateButtonClicked = new DelegateCommand<Employee>(UpdateEmployeeDetails);
-            DeleteButtonClicked = new DelegateCommand<Employee>(DeleteEmployeeDetails);
+            DeleteButtonClicked = new DelegateCommand<Employee>(DeleteEmployee);
             PostButtonClick = new DelegateCommand(CreateNewEmployee);
             ShowRegistrationForm = new DelegateCommand(RegisterEmployee);
             DataGridRowSelected = new DelegateCommand(CheckForUpdateDeleteButton);
         }
-        #endregion
+       
 
        
         private void RegisterEmployee()
@@ -263,7 +257,7 @@ namespace EmployeeDesk.ViewModels
         /// Updates employee's record  
         /// </summary>  
         /// <param name="employee"></param>  
-        private void UpdateEmployeeDetails(Employee employee)
+        public void UpdateEmployeeDetails(Employee employee)
         {
             EmployeeData updatedEmployee = null;
             if (employee != null)
@@ -292,7 +286,7 @@ namespace EmployeeDesk.ViewModels
         /// Deletes employee's record  
         /// </summary>  
         /// <param name="employee"></param>  
-        private void DeleteEmployeeDetails(Employee employee)
+        public void DeleteEmployee(Employee employee)
         {
             var employeeDetails = ApiController.DeleteCall(ApiUrls.emplist + "/" + employee.Id);
             if (employeeDetails.Result.StatusCode == System.Net.HttpStatusCode.OK)

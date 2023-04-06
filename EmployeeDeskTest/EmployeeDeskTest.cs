@@ -26,7 +26,31 @@ namespace EmployeeDeskTest
                 Status = 0
             };
             empVm.CreateNewEmployee();
+        }        
+        [TestMethod]
+        public void Test_UpdateEmployee()
+        {
+            var objemp = new Employee()
+            {
+                Id= 781183,
+                Name = "Murali",
+                Email = "muralikv@gmail.com",
+                Gender = "Male",
+                Status = "Active",                                
+            };
+            new EmployeeViewModel().UpdateEmployeeDetails(objemp);
         }
+        [TestMethod]
+        public void Test_DeleteEmployee()
+        {
+            var objemp = new Employee()
+            {
+                Name="Murali",
+                Id = 781183               
+            };
+            new EmployeeViewModel().DeleteEmployee(objemp);
+        }
+
         [TestMethod]
         public void Test_RegisterEmployeeFail()
         {
