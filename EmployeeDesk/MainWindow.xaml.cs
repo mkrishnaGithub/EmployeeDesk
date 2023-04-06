@@ -25,6 +25,6 @@ namespace EmployeeDesk
         {
             InitializeComponent();
             new EmployeeViewModel();
-        }
+        }        
     }
 }

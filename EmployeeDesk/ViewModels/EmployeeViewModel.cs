@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows;
 using static EmployeeDesk.Models.Enums;
 
 namespace EmployeeDesk.ViewModels
@@ -44,15 +45,8 @@ namespace EmployeeDesk.ViewModels
             set { SetProperty(ref _isLoadData, value); }
         }
 
-        private string _responseMessage = "";
-
-        public string ResponseMessage
-        {
-            get { return _responseMessage; }
-            set { SetProperty(ref _responseMessage, value); }
-        }
-
-        #region [Create Employee Properties]  
+     
+        #region Employee Properties 
 
         private string _name;
 
@@ -115,14 +109,21 @@ namespace EmployeeDesk.ViewModels
             get { return _isPostBtnEnable; }
             set { SetProperty(ref _isPostBtnEnable, value); }
         }
+        private bool _isUpdateDeleteBtnEnable = false;
 
-        private string _showPostMessage = "Fill the form to register an employee!";
-
-        public string ShowPostMessage
+        public bool IsUpdateDeleteBtnEnable
         {
-            get { return _showPostMessage; }
-            set { SetProperty(ref _showPostMessage, value); }
+            get { return _isUpdateDeleteBtnEnable; }
+            set { SetProperty(ref _isUpdateDeleteBtnEnable, value); }
         }
+
+        //private string _showPostMessage = "Fill the form to register an employee!";
+
+        //public string ShowPostMessage
+        //{
+        //    get { return _showPostMessage; }
+        //    set { SetProperty(ref _showPostMessage, value); }
+        //}
         #endregion
 
         #region ICommands  
@@ -131,6 +132,7 @@ namespace EmployeeDesk.ViewModels
         public DelegateCommand PostButtonClick { get; set; }
         public DelegateCommand<Employee> UpdateButtonClicked { get; set; }
         public DelegateCommand<Employee> DeleteButtonClicked { get; set; }
+        public DelegateCommand DataGridRowSelected { get; set; }
 
         public string Error { get { return null; } }
 
@@ -171,6 +173,7 @@ namespace EmployeeDesk.ViewModels
             DeleteButtonClicked = new DelegateCommand<Employee>(DeleteEmployeeDetails);
             PostButtonClick = new DelegateCommand(CreateNewEmployee);
             ShowRegistrationForm = new DelegateCommand(RegisterEmployee);
+            DataGridRowSelected = new DelegateCommand(CheckForUpdateDeleteButton);
         }
         #endregion
 
@@ -178,6 +181,11 @@ namespace EmployeeDesk.ViewModels
         private void RegisterEmployee()
         {
             IsShowForm = true;
+        }
+
+        private void CheckForUpdateDeleteButton()
+        {
+            IsUpdateDeleteBtnEnable = SelectedEmployee != null && SelectedEmployee.Id > 0;            
         }
 
         /// <summary>  
@@ -224,25 +232,24 @@ namespace EmployeeDesk.ViewModels
                     };
                     var resp = JsonSerializer.Deserialize<CreateEmployeeResponse>(result, options);
                     if (resp != null && resp.code == 201)
-                    {
-                        ShowPostMessage = newEmployee.name + "'s details has added successfully !";
+                    {                       
+                        MessageBox.Show(newEmployee.name + "'s details has added successfully !");
                         GetEmployeeDetails();
                     }
                     else
                     {
-                        ShowPostMessage = "Failed to update" + newEmployee.name + "'s details.";
+                        MessageBox.Show("Failed to update" + newEmployee.name + "'s details.");                       
                     }
                 }
                 catch (Exception e)
                 {
-                    ShowPostMessage = "Exception :" + e.InnerException != null ? e.InnerException.Message : "Error happened";
+                    MessageBox.Show("Failed to update");                   
                 }
 
             }
             else
             {
-                ShowPostMessage = "Failed to update" + newEmployee.name + "'s details.";
-
+                MessageBox.Show("Failed to update");               
             }
         }
 
@@ -267,11 +274,11 @@ namespace EmployeeDesk.ViewModels
             var employeeDetails = ApiController.PutCall(ApiUrls.emplist + "/" + employee.Id, updatedEmployee);
             if (employeeDetails.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                ResponseMessage = employee.Name + "'s details has updated successfully !";
+                MessageBox.Show(employee.Name + "'s details has updated successfully !");              
             }
             else
             {
-                ResponseMessage = "Failed to update" + employee.Name + "'s details.";
+                MessageBox.Show("Failed to update" + employee.Name + "'s details.");
             }
             GetEmployeeDetails();
         }
@@ -285,11 +292,11 @@ namespace EmployeeDesk.ViewModels
             var employeeDetails = ApiController.DeleteCall(ApiUrls.emplist + "/" + employee.Id);
             if (employeeDetails.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                ResponseMessage = employee.Name + "'s details has deleted successfully !";
+                MessageBox.Show(employee.Name + "'s details has deleted successfully !");                
             }
             else
             {
-                ResponseMessage = "Failed to delete" + employee.Name + "'s details.";
+                MessageBox.Show("Failed to delete" + employee.Name + "'s details.");
             }
             GetEmployeeDetails();
         }
