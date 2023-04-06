@@ -10,31 +10,6 @@
     <Window.Resources>
         <ViewModel:EmployeeViewModel x:Key="VM" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-        <Style TargetType="Button" x:Key="defaultBtnStyle">
-            <Setter Property="Background" Value="#4285f4" />
-            <Setter Property="FontSize" Value="12" />
-            <Setter Property="FontStyle" Value="Italic"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="White"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-        </Style>
-        <Style TargetType="Label" x:Key="HeaderLable">
-            <Setter Property="FontSize" Value="15"></Setter>
-            <Setter Property="Foreground" Value="Orange"></Setter>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="Gray"/>
-            <Setter Property="Margin" Value="0 0 0 20"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-
-        </Style>
-        <Style TargetType="DataGridColumnHeader" x:Key="DataGridHeaderStyle">
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-        </Style>
-       
-        
     </Window.Resources>
     <Grid x:Name="MainGrid" Margin="20" Background="Lavender"  DataContext="{Binding Source={StaticResource VM}}" >
         <Grid.ColumnDefinitions>
@@ -50,13 +25,11 @@
                 <Button x:Name="ButtonGet"
                 Command="{Binding GetButtonClicked}"
                     Style="{StaticResource defaultBtnStyle}"
-                Height="25"
-                Width="120"
+               
                 Content="Reload Data" Margin="0 0 0 10"/>
                 <Button x:Name="ButtonPost" Style="{StaticResource defaultBtnStyle}"
                 Command="{Binding ShowRegistrationForm}"                
-                Height="25"
-                Width="120"
+              
                 Content="Register" 
                 VerticalAlignment="Center"/>
                 <!--Visibility="{Binding IsShowForm, Converter={StaticResource BooleanToVisibilityConverter}}"-->
@@ -99,7 +72,7 @@
                  Grid.Row="1"
                  Grid.Column="1"/>
                         <ComboBox x:Name="comboBoxGender"                          
-                 Height="20"        
+                 Height="20"  Background="AliceBlue"
                  Width="150"       
                  Grid.Row="2"
                  Grid.Column="1" SelectedIndex="{Binding SelectedGender}">
@@ -107,7 +80,7 @@
                             <ComboBoxItem Name="Female">Female</ComboBoxItem>
                         </ComboBox>
                         <ComboBox x:Name="comboBoxStatus" 
-                 Text="{Binding Status}"       
+                 Text="{Binding Status}"  Background="AliceBlue"      
                  Height="20"        
                  Width="150"        
                  Grid.Column="1"        
@@ -116,8 +89,7 @@
                             <ComboBoxItem Name="InActive">InActive</ComboBoxItem>
                         </ComboBox>
                         <Button x:Name="ButtonAdd"        
-                Height="20"        
-                Width="100"        
+                      
                 Content="Save"     
                         Style="{StaticResource defaultBtnStyle}"
                 HorizontalAlignment="Center"        
