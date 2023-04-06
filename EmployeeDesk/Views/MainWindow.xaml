@@ -16,7 +16,7 @@
             <ColumnDefinition Width="*"></ColumnDefinition>
             <ColumnDefinition Width="2*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <Border BorderThickness="1 1 0 1" BorderBrush="Black" Grid.Column="0">
+        <Border BorderThickness="1 1 0 1" BorderBrush="Black" Grid.Column="0" CornerRadius="8 0 0 8">
             <StackPanel x:Name="StackPanelGetPost"
             Orientation="Vertical" 
             HorizontalAlignment="Center"
@@ -33,8 +33,8 @@
                 Content="Register" 
                 VerticalAlignment="Center"/>
                 <!--Visibility="{Binding IsShowForm, Converter={StaticResource BooleanToVisibilityConverter}}"-->
-                <Border BorderBrush="LightGray" BorderThickness="0.5" Margin="10" CornerRadius="8">
-                    <Grid x:Name="GridCreateNewEmployee" Visibility="{Binding IsShowForm, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="40">
+                <Border BorderBrush="LightGray" BorderThickness="0.5" Margin="10" CornerRadius="8" Visibility="{Binding IsShowForm, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid x:Name="GridCreateNewEmployee"  Margin="40">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>

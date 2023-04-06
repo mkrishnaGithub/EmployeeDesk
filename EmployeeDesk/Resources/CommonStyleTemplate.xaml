@@ -14,8 +14,8 @@
     </Style>
     <Style TargetType="Label" x:Key="HeaderLable">
         <Setter Property="FontSize" Value="15"></Setter>
-        <Setter Property="Foreground" Value="Orange"></Setter>
-        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Foreground" Value="#ff004e"></Setter>
+        <Setter Property="BorderThickness" Value="0.2"/>
         <Setter Property="BorderBrush" Value="Gray"/>
         <Setter Property="Margin" Value="0 0 0 20"/>
         <Setter Property="FontWeight" Value="Bold"/>

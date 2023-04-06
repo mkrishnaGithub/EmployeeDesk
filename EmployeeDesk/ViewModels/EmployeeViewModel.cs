@@ -119,6 +119,7 @@ namespace EmployeeDesk.ViewModels
         }
 
         #endregion
+
         #region Validations
         public string Error { get { return null; } }
 
@@ -165,32 +166,33 @@ namespace EmployeeDesk.ViewModels
             GetButtonClicked = new DelegateCommand(GetEmployeeDetails);
             UpdateButtonClicked = new DelegateCommand<Employee>(UpdateEmployeeDetails);
             DeleteButtonClicked = new DelegateCommand<Employee>(DeleteEmployee);
-            PostButtonClick = new DelegateCommand(CreateNewEmployee);
+            PostButtonClick = new DelegateCommand(CreateEmployee);
             ShowRegistrationForm = new DelegateCommand(RegisterEmployee);
             DataGridRowSelected = new DelegateCommand(CheckForUpdateDeleteButton);
         }
-       
 
-       
+
+        #region Command Methods
+
         private void RegisterEmployee()
         {
             IsShowForm = true;
         }
-
+        /// <summary>
+        /// To check update&Delete button visibility(enable/disable)
+        /// </summary>
         private void CheckForUpdateDeleteButton()
         {
-            IsUpdateDeleteBtnEnable = SelectedEmployee != null && SelectedEmployee.Id > 0;            
+            IsUpdateDeleteBtnEnable = SelectedEmployee != null && SelectedEmployee.Id > 0;
         }
-
         /// <summary>  
-        /// Fetches employee details  
+        /// Get employee details  
         /// </summary>  
         public async void GetEmployeeDetails()
         {
-            var employeeDetails = ApiController.GetCall(ApiUrls.emplist);
+            var employeeDetails = ApiController.GetData(ApiUrls.emplist);
             if (employeeDetails.Result.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                //Employees = employeeDetails.Result.Content.ReadAsAsync<List<Employee>>().Result;
+            {                
                 var result = await employeeDetails.Result.Content.ReadAsStringAsync();
                 var options = new JsonSerializerOptions
                 {
@@ -205,7 +207,7 @@ namespace EmployeeDesk.ViewModels
         /// <summary>  
         /// Adds new employee  
         /// </summary>  
-        public async void CreateNewEmployee()
+        public async void CreateEmployee()
         {
             if (!string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(Email))
             {
@@ -216,7 +218,7 @@ namespace EmployeeDesk.ViewModels
                     gender = ((GenderEnum)Enum.ToObject(typeof(GenderEnum), SelectedGender)).ToString(),
                     status = ((EmployeeStatus)Enum.ToObject(typeof(EmployeeStatus), SelectedStatus)).ToString(),
                 };
-                var employeeDetails = ApiController.PostCall(ApiUrls.emplist, newEmployee);
+                var employeeDetails = ApiController.PostData(ApiUrls.emplist, newEmployee);
                 if (employeeDetails.Result.StatusCode == System.Net.HttpStatusCode.OK)
                 {
                     try
@@ -259,25 +261,32 @@ namespace EmployeeDesk.ViewModels
         /// <param name="employee"></param>  
         public void UpdateEmployeeDetails(Employee employee)
         {
-            EmployeeData updatedEmployee = null;
-            if (employee != null)
+            if (employee != null && employee.Id > 0)
             {
-                updatedEmployee = new EmployeeData()
+                EmployeeData updatedEmployee = null;
+                if (employee != null)
                 {
-                    name = employee.Name,
-                    email = employee.Email,
-                    gender = employee.Gender,
-                    status = employee.Status
-                };
-            }
-            var employeeDetails = ApiController.PutCall(ApiUrls.emplist + "/" + employee.Id, updatedEmployee);
-            if (employeeDetails.Result.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                MessageBox.Show(employee.Name + "'s details has updated successfully !");              
+                    updatedEmployee = new EmployeeData()
+                    {
+                        name = employee.Name,
+                        email = employee.Email,
+                        gender = employee.Gender,
+                        status = employee.Status
+                    };
+                }
+                var employeeDetails = ApiController.PutData(ApiUrls.emplist + "/" + employee.Id, updatedEmployee);
+                if (employeeDetails.Result.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    MessageBox.Show(employee.Name + "'s details has updated successfully !");
+                }
+                else
+                {
+                    MessageBox.Show("Failed to update" + employee.Name + "'s details.");
+                }
             }
             else
             {
-                MessageBox.Show("Failed to update" + employee.Name + "'s details.");
+                MessageBox.Show("Failed to update");
             }
             GetEmployeeDetails();
         }
@@ -288,17 +297,27 @@ namespace EmployeeDesk.ViewModels
         /// <param name="employee"></param>  
         public void DeleteEmployee(Employee employee)
         {
-            var employeeDetails = ApiController.DeleteCall(ApiUrls.emplist + "/" + employee.Id);
-            if (employeeDetails.Result.StatusCode == System.Net.HttpStatusCode.OK)
+            if(employee!=null && employee.Id > 0)
             {
-                MessageBox.Show(employee.Name + "'s details has deleted successfully !");                
+                var employeeDetails = ApiController.DeleteData(ApiUrls.emplist + "/" + employee.Id);
+                if (employeeDetails.Result.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    MessageBox.Show(employee.Name + "'s details has deleted successfully !");
+                }
+                else
+                {
+                    MessageBox.Show("Failed to delete" + employee.Name + "'s details.");
+                }
             }
             else
             {
-                MessageBox.Show("Failed to delete" + employee.Name + "'s details.");
+                MessageBox.Show("Failed to delete");
             }
             GetEmployeeDetails();
         }
+
+        #endregion
+
         private bool CheckPostButtonEnable()
         {                       
             if(string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Email) || (!string.IsNullOrEmpty(Email) && !regexemail.IsMatch(Email)))

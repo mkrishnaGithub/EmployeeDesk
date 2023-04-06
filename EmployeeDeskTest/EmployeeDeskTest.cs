@@ -25,7 +25,7 @@ namespace EmployeeDeskTest
                 Gender = 0,
                 Status = 0
             };
-            empVm.CreateNewEmployee();
+            empVm.CreateEmployee();
         }        
         [TestMethod]
         public void Test_UpdateEmployee()
@@ -61,7 +61,7 @@ namespace EmployeeDeskTest
                 Gender = 0,
                 Status = 0
             };
-            empVm.CreateNewEmployee();
+            empVm.CreateEmployee();
         }
     }
 }

@@ -15,7 +15,7 @@ namespace EmployeeDesk.Controller
 {
     public class ApiController
     {
-        public static Task<HttpResponseMessage> GetCall(string url)
+        public static Task<HttpResponseMessage> GetData(string url)
         {
             try
             {
@@ -47,7 +47,7 @@ namespace EmployeeDesk.Controller
         /// <param name="url"></param>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static Task<HttpResponseMessage> PostCall<T>(string url, T model) 
+        public static Task<HttpResponseMessage> PostData<T>(string url, T model) 
         {
             try
             {
@@ -81,7 +81,7 @@ namespace EmployeeDesk.Controller
         /// <param name="url"></param>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static Task<HttpResponseMessage> PutCall<T>(string url, T model)
+        public static Task<HttpResponseMessage> PutData<T>(string url, T model)
         {
             try
             {
@@ -111,7 +111,7 @@ namespace EmployeeDesk.Controller
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        public static Task<HttpResponseMessage> DeleteCall(string url)
+        public static Task<HttpResponseMessage> DeleteData(string url)
         {
             try
             {
@@ -128,7 +128,7 @@ namespace EmployeeDesk.Controller
                     return response;
                 }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
                 throw;
             }
