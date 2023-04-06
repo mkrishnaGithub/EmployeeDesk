@@ -191,7 +191,7 @@ namespace EmployeeDesk.ViewModels
         /// <summary>  
         /// Fetches employee details  
         /// </summary>  
-        private async void GetEmployeeDetails()
+        public async void GetEmployeeDetails()
         {
             var employeeDetails = ApiController.GetCall(ApiUrls.emplist);
             if (employeeDetails.Result.StatusCode == System.Net.HttpStatusCode.OK)
@@ -211,46 +211,51 @@ namespace EmployeeDesk.ViewModels
         /// <summary>  
         /// Adds new employee  
         /// </summary>  
-        private async void CreateNewEmployee()
+        public async void CreateNewEmployee()
         {
-            EmployeeData newEmployee = new EmployeeData()
+            if (!string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(Email))
             {
-                name = Name,
-                email = Email,
-                gender = ((GenderEnum)Enum.ToObject(typeof(GenderEnum), SelectedGender)).ToString(),
-                status = ((EmployeeStatus)Enum.ToObject(typeof(EmployeeStatus), SelectedStatus)).ToString(),
-            };
-            var employeeDetails = ApiController.PostCall(ApiUrls.emplist, newEmployee);
-            if (employeeDetails.Result.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                try
+                EmployeeData newEmployee = new EmployeeData()
                 {
-                    var result = await employeeDetails.Result.Content.ReadAsStringAsync();
-                    var options = new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    };
-                    var resp = JsonSerializer.Deserialize<CreateEmployeeResponse>(result, options);
-                    if (resp != null && resp.code == 201)
-                    {                       
-                        MessageBox.Show(newEmployee.name + "'s details has added successfully !");
-                        GetEmployeeDetails();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Failed to update" + newEmployee.name + "'s details.");                       
-                    }
-                }
-                catch (Exception e)
+                    name = Name,
+                    email = Email,
+                    gender = ((GenderEnum)Enum.ToObject(typeof(GenderEnum), SelectedGender)).ToString(),
+                    status = ((EmployeeStatus)Enum.ToObject(typeof(EmployeeStatus), SelectedStatus)).ToString(),
+                };
+                var employeeDetails = ApiController.PostCall(ApiUrls.emplist, newEmployee);
+                if (employeeDetails.Result.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    MessageBox.Show("Failed to update");                   
-                }
+                    try
+                    {
+                        var result = await employeeDetails.Result.Content.ReadAsStringAsync();
+                        var options = new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        };
+                        var resp = JsonSerializer.Deserialize<CreateEmployeeResponse>(result, options);
+                        if (resp != null && resp.code == 201)
+                        {
+                            MessageBox.Show(newEmployee.name + "'s details has added successfully !");
+                            GetEmployeeDetails();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Failed to add" + newEmployee.name + "'s details.");
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        MessageBox.Show("Failed to save employee details");
+                    }
 
+                }
+                else
+                {
+                    MessageBox.Show("Failed to save employee details");
+                }
             }
             else
-            {
-                MessageBox.Show("Failed to update");               
-            }
+                MessageBox.Show("please fill the required fields");
         }
 
 
