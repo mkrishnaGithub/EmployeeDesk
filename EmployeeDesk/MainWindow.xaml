@@ -9,107 +9,152 @@
     <Window.Resources>
         <ViewModel:EmployeeViewModel x:Key="VM" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <Style TargetType="Button" x:Key="defaultBtnStyle">
+            <Setter Property="Background" Value="#4285f4" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontStyle" Value="Italic"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="White"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style TargetType="Label" x:Key="HeaderLable">
+            <Setter Property="FontSize" Value="15"></Setter>
+            <Setter Property="Foreground" Value="Orange"></Setter>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="Gray"/>
+            <Setter Property="Margin" Value="0 0 0 20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+
+        </Style>
+        <Style TargetType="DataGridColumnHeader" x:Key="DataGridHeaderStyle">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+        <Style TargetType="TextBlock" x:Key="ResponseMesgStyle">
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="Black"></Setter>
+        </Style>
+        
     </Window.Resources>
-    <Grid x:Name="MainGrid" Margin="20"   DataContext="{Binding Source={StaticResource VM}}" >
+    <Grid x:Name="MainGrid" Margin="20" Background="Lavender"  DataContext="{Binding Source={StaticResource VM}}" >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"></ColumnDefinition>
             <ColumnDefinition Width="2*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <StackPanel x:Name="StackPanelGetPost"
-            Orientation="Vertical"
+        <Border BorderThickness="1" BorderBrush="Black" Grid.Column="0">
+            <StackPanel x:Name="StackPanelGetPost"
+            Orientation="Vertical" 
             HorizontalAlignment="Center"
-            Margin="0 10 0 0">
-            <Button x:Name="ButtonGet"
+            Margin="0 10 0 0" >
+                <Label Style="{StaticResource HeaderLable}" HorizontalAlignment="Center">Welcome To Employee Desk</Label>
+                <Button x:Name="ButtonGet"
                 Command="{Binding GetButtonClicked}"
-                Height="20"
+                    Style="{StaticResource defaultBtnStyle}"
+                Height="25"
                 Width="120"
-                Content="GET" Margin="0 0 0 10"/>
-            <Button x:Name="ButtonPost"
+                Content="Reload Data" Margin="0 0 0 10"/>
+                <Button x:Name="ButtonPost" Style="{StaticResource defaultBtnStyle}"
                 Command="{Binding ShowRegistrationForm}"                
-                Height="20"
+                Height="25"
                 Width="120"
                 Content="Register" 
                 VerticalAlignment="Center"/>
-
-            <Grid x:Name="GridCreateNewEmployee"
-            Visibility="{Binding IsShowForm, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="5*"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <Label x:Name="LabelUsertName"        
+                <!--Visibility="{Binding IsShowForm, Converter={StaticResource BooleanToVisibilityConverter}}"-->
+                <Border BorderBrush="LightGray" BorderThickness="0.5" Margin="10 10">
+                    <Grid x:Name="GridCreateNewEmployee" Visibility="{Binding IsShowForm, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="5*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Label x:Name="LabelUsertName"        
                Content="Name:"    
                Margin="0 10 0 0"/>
-                <Label x:Name="LabelUserEmail"         
+                        <Label x:Name="LabelUserEmail"         
                Content="Email:"        
                Grid.Row="1"/>
-                <Label x:Name="LabelGender"         
+                        <Label x:Name="LabelGender"         
                Content="Gender:"        
                Grid.Row="2"/>
-                <Label x:Name="LabelStatus"         
+                        <Label x:Name="LabelStatus"         
                Content="Status:"        
                Grid.Row="3"/>
 
-                <TextBox x:Name="TextBoxUserName"      
-                 Text="{Binding Name}"    
+                        <TextBox x:Name="TextBoxUserName"      
+                 Text="{Binding Name, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"    
                  Height="20"        
                  Width="150"       
                  Grid.Column="1"/>
-                <TextBox x:Name="TextBoxUserEmail"      
-                 Text="{Binding Email}"    
+                        <TextBox x:Name="TextBoxUserEmail"      
+                 Text="{Binding Email, ValidatesOnDataErrors=True, UpdateSourceTrigger=PropertyChanged}"    
                  Height="20"        
                  Width="150"       
                  Grid.Row="1"
                  Grid.Column="1"/>
-                <TextBox x:Name="TextBoxGender"      
-                 Text="{Binding Gender}"    
+                        <ComboBox x:Name="comboBoxGender"                          
                  Height="20"        
                  Width="150"       
                  Grid.Row="2"
-                 Grid.Column="1"/>
-                <TextBox x:Name="TextBoxStatus" 
+                 Grid.Column="1" SelectedIndex="{Binding SelectedGender}">
+                            <ComboBoxItem  Name="Male">Male</ComboBoxItem>
+                            <ComboBoxItem Name="Female">Female</ComboBoxItem>
+                        </ComboBox>
+                        <ComboBox x:Name="comboBoxStatus" 
                  Text="{Binding Status}"       
                  Height="20"        
                  Width="150"        
                  Grid.Column="1"        
-                 Grid.Row="3"/>
-
-                <Button x:Name="ButtonAdd"        
+                 Grid.Row="3" SelectedIndex="{Binding SelectedStatus}">
+                            <ComboBoxItem  Name="Active">Active</ComboBoxItem>
+                            <ComboBoxItem Name="InActive">InActive</ComboBoxItem>
+                        </ComboBox>
+                        <Button x:Name="ButtonAdd"        
                 Height="20"        
                 Width="100"        
-                Content="POST"        
+                Content="POST"     
+                        Style="{StaticResource defaultBtnStyle}"
                 HorizontalAlignment="Center"        
                 Margin="20 10 0 0"                         
                 Command="{Binding PostButtonClick}"  
+                                IsEnabled="{Binding IsPostBtnEnable}"
                 
                 Grid.Row="4"        
                 Grid.ColumnSpan="2"/>
-                <!--CommandParameter="{Binding CreateEmployee}"-->
-                <TextBlock x:Name="TextBlockMessage" 
+                        <!--CommandParameter="{Binding CreateEmployee}"-->
+                        <TextBlock x:Name="TextBlockMessage" 
                    Text="{Binding ShowPostMessage}"
                    HorizontalAlignment="Center"    
                    Margin="20 8 0 0"      
                    Grid.Row="5"    
                    Grid.ColumnSpan="2"/>
-            </Grid>
-        </StackPanel>
-        <Grid x:Name="GridEmployeeDetails"
-              Visibility="{Binding IsLoadData, Converter={StaticResource BooleanToVisibilityConverter}}"
-               Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <DataGrid x:Name="DataGridEmployee"
+                    </Grid>
+                </Border>
+               
+            </StackPanel>
+        </Border>
+    
+        <!--Visibility="{Binding IsLoadData, Converter={StaticResource BooleanToVisibilityConverter}}"-->
+
+        <Border BorderBrush="Black" BorderThickness="1"  Grid.Column="1">
+            <Grid x:Name="GridEmployeeDetails"
+                  Visibility="{Binding IsLoadData, Converter={StaticResource BooleanToVisibilityConverter}}"
+               Margin="0 10 0 0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <DataGrid x:Name="DataGridEmployee"
                   ItemsSource="{Binding Employees}"
                   SelectedItem="{Binding SelectedEmployee}"
                    AutoGenerateColumns="False"
@@ -117,49 +162,57 @@
                   BorderBrush="Gray" 
                   BorderThickness="5"  
                   Background="LightGray"
-                  Margin="0 10 0 0"
+                  Margin="20 10 20 10"
                   RowBackground="LightGray" 
-                  Width="310" >
-                <DataGrid.Columns>
-                    <DataGridTextColumn x:Name="ColumnName"
-                                    Header="Name"
-                                    Binding="{Binding Name}"/>
-                    <DataGridTextColumn x:Name="ColumnEmail"
+                   HorizontalAlignment="Stretch">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn x:Name="ColumnName"
+                                    Header="Name" HeaderStyle="{StaticResource DataGridHeaderStyle}"
+                                    Binding="{Binding Name}" Width="2*"/>
+                        <DataGridTextColumn x:Name="ColumnEmail"
                                     Header="Email"
-                                    Binding="{Binding Email}"/>
-                    <DataGridTextColumn x:Name="ColumnGender"
+                                        HeaderStyle="{StaticResource DataGridHeaderStyle}"
+                                    Binding="{Binding Email}"  Width="2*"/>
+                        <DataGridTextColumn x:Name="ColumnGender"
+                                         HeaderStyle="{StaticResource DataGridHeaderStyle}"
                                     Header="Gender"
-                                    Binding="{Binding Gender}"/>
-                    <DataGridTextColumn x:Name="ColumnStatus"
+                                    Binding="{Binding Gender}" Width="*"/>
+                        <DataGridTextColumn x:Name="ColumnStatus"
                                     Header="Status"
-                                    Binding="{Binding Status}"/>
-                </DataGrid.Columns>
-            </DataGrid>
-            <StackPanel x:Name="StackPanlePutDelete"
+                                        HeaderStyle="{StaticResource DataGridHeaderStyle}"
+                                    Binding="{Binding Status}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <StackPanel x:Name="StackPanlePutDelete"
                         HorizontalAlignment="Center"
                         Margin="0 10 0 0"
                         Orientation="Horizontal"
                         Grid.Row="1">
-                <Button x:Name="ButtonPut"
+                    <Button x:Name="ButtonPut"
                         Command="{Binding UpdateButtonClicked}"
                         CommandParameter="{Binding SelectedEmployee}"
-                        Height="20"
+                        Style="{StaticResource defaultBtnStyle}"
+                        Height="25"
                         Width="120"
                         Content="Update"/>
-                <Button x:Name="ButtonDelete"
+                    <Button x:Name="ButtonDelete"
                         Command="{Binding DeleteButtonClicked}"
                         CommandParameter="{Binding SelectedEmployee}"
-                        Margin="10 0 0 0"
-                        Height="20"
+                        Style="{StaticResource defaultBtnStyle}"
+                        Margin="20 0 0 0"
+                        Height="25"
                         Width="120"
                         Content="Delete"/>
-            </StackPanel>
-            <TextBlock x:Name="TextBlockResponse"    
+                </StackPanel>
+                <TextBlock x:Name="TextBlockResponse"    
                    Text="{Binding ResponseMessage}"
+                       Style="{StaticResource ResponseMesgStyle}"
                    HorizontalAlignment="Center"    
                    Margin="20 8 0 0"      
                    Grid.Row="2" />
-        </Grid>
+            </Grid>
+        </Border>
+           
 
     </Grid>
     <!--<Grid x:Name="MainGrid"

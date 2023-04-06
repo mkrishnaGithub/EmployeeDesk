@@ -47,7 +47,7 @@ namespace EmployeeDesk.Controller
         /// <param name="url"></param>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static Task<HttpResponseMessage> PostCall<T>(string url, T model) where T : class
+        public static Task<HttpResponseMessage> PostCall<T>(string url, T model) 
         {
             try
             {
@@ -90,7 +90,7 @@ namespace EmployeeDesk.Controller
                 using (var httpContent = JsonHelper.CreateHttpContent(model))
                 {
                     string apiUrl = ApiUrls.baseURI + url;
-                    client.BaseAddress = new Uri(apiUrl + "/234234");
+                    client.BaseAddress = new Uri(apiUrl);
                     client.Timeout = TimeSpan.FromSeconds(900);
                     client.DefaultRequestHeaders.Accept.Clear();
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));

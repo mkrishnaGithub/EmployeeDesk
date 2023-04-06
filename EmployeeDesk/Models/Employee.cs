@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EmployeeDesk.Models
 {
-    public class Employee
+    public class Employee 
     {
         //public int Id { get; set; }
         //public string Name { get; set; }

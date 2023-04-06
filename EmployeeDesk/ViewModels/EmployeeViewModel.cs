@@ -9,14 +9,17 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static EmployeeDesk.Models.Enums;
 
 namespace EmployeeDesk.ViewModels
 {
-    public class EmployeeViewModel : BindableBase, INotifyPropertyChanged
+    public class EmployeeViewModel : BindableBase, INotifyPropertyChanged, IDataErrorInfo
     {
         #region Properties  
 
+        Regex regexemail = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
         private List<Employee> _employees;
 
         public List<Employee> Employees
@@ -41,7 +44,7 @@ namespace EmployeeDesk.ViewModels
             set { SetProperty(ref _isLoadData, value); }
         }
 
-        private string _responseMessage = "Welcome to REST API Tutorials";
+        private string _responseMessage = "";
 
         public string ResponseMessage
         {
@@ -68,21 +71,35 @@ namespace EmployeeDesk.ViewModels
             set { SetProperty(ref _email, value); }
         }
 
-        private string _gender;
+     
+        private int _selectedGender;
+        public int SelectedGender
+        {
+            get { return _selectedGender; }
+            set { SetProperty(ref _selectedGender, value); }
+        }
+        private GenderEnum _gender;
 
-        public string Gender
+        public GenderEnum Gender
         {
             get { return _gender; }
             set { SetProperty(ref _gender, value); }
         }
 
-        private string _status;
+        private int _selectedStatus;
+        public int SelectedStatus
+        {
+            get { return _selectedStatus; }
+            set { SetProperty(ref _selectedStatus, value); }
+        }
+        private EmployeeStatus _status;
 
-        public string Status
+        public EmployeeStatus Status
         {
             get { return _status; }
             set { SetProperty(ref _status, value); }
         }
+
         #endregion
         private bool _isShowForm;
 
@@ -90,6 +107,13 @@ namespace EmployeeDesk.ViewModels
         {
             get { return _isShowForm; }
             set { SetProperty(ref _isShowForm, value); }
+        }
+        private bool _isPostBtnEnable=true;
+
+        public bool IsPostBtnEnable
+        {
+            get { return _isPostBtnEnable; }
+            set { SetProperty(ref _isPostBtnEnable, value); }
         }
 
         private string _showPostMessage = "Fill the form to register an employee!";
@@ -107,12 +131,41 @@ namespace EmployeeDesk.ViewModels
         public DelegateCommand PostButtonClick { get; set; }
         public DelegateCommand<Employee> UpdateButtonClicked { get; set; }
         public DelegateCommand<Employee> DeleteButtonClicked { get; set; }
+
+        public string Error { get { return null; } }
+
+        public string this[string paramName]
+        {
+            get
+            {
+                string result = null;
+                switch (paramName)
+                {
+                    case "Name" :
+                        if (string.IsNullOrEmpty(Name) || string.IsNullOrWhiteSpace(Name))
+                        {
+                            result = "Employee name cannot be empty";                            
+                        }
+                        
+                        break;
+                    case "Email":
+                      
+                        if (string.IsNullOrEmpty(Email) || (!string.IsNullOrEmpty(Email) && !regexemail.IsMatch(Email)))
+                        {
+                            result = "Email should be valid one";                           
+                        }                        
+                        break;
+                }
+                IsPostBtnEnable= CheckPostButtonEnable();
+                return result;
+            }
+        }
         #endregion
 
         #region Constructor          
         public EmployeeViewModel()
         {
-
+            GetEmployeeDetails();
             GetButtonClicked = new DelegateCommand(GetEmployeeDetails);
             UpdateButtonClicked = new DelegateCommand<Employee>(UpdateEmployeeDetails);
             DeleteButtonClicked = new DelegateCommand<Employee>(DeleteEmployeeDetails);
@@ -156,9 +209,8 @@ namespace EmployeeDesk.ViewModels
             {
                 name = Name,
                 email = Email,
-                gender = Gender,
-                status = Status
-
+                gender = ((GenderEnum)Enum.ToObject(typeof(GenderEnum), SelectedGender)).ToString(),
+                status = ((EmployeeStatus)Enum.ToObject(typeof(EmployeeStatus), SelectedStatus)).ToString(),
             };
             var employeeDetails = ApiController.PostCall(ApiUrls.emplist, newEmployee);
             if (employeeDetails.Result.StatusCode == System.Net.HttpStatusCode.OK)
@@ -173,7 +225,8 @@ namespace EmployeeDesk.ViewModels
                     var resp = JsonSerializer.Deserialize<CreateEmployeeResponse>(result, options);
                     if (resp != null && resp.code == 201)
                     {
-                        ShowPostMessage = newEmployee.name + "'s details has successfully been added!";
+                        ShowPostMessage = newEmployee.name + "'s details has added successfully !";
+                        GetEmployeeDetails();
                     }
                     else
                     {
@@ -200,15 +253,27 @@ namespace EmployeeDesk.ViewModels
         /// <param name="employee"></param>  
         private void UpdateEmployeeDetails(Employee employee)
         {
-            var employeeDetails = ApiController.PutCall(ApiUrls.emplist + "/" + employee.Id, employee);
+            EmployeeData updatedEmployee = null;
+            if (employee != null)
+            {
+                updatedEmployee = new EmployeeData()
+                {
+                    name = employee.Name,
+                    email = employee.Email,
+                    gender = employee.Gender,
+                    status = employee.Status
+                };
+            }
+            var employeeDetails = ApiController.PutCall(ApiUrls.emplist + "/" + employee.Id, updatedEmployee);
             if (employeeDetails.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                ResponseMessage = employee.Name + "'s details has successfully been updated!";
+                ResponseMessage = employee.Name + "'s details has updated successfully !";
             }
             else
             {
                 ResponseMessage = "Failed to update" + employee.Name + "'s details.";
             }
+            GetEmployeeDetails();
         }
 
         /// <summary>  
@@ -220,12 +285,21 @@ namespace EmployeeDesk.ViewModels
             var employeeDetails = ApiController.DeleteCall(ApiUrls.emplist + "/" + employee.Id);
             if (employeeDetails.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                ResponseMessage = employee.Name + "'s details has successfully been deleted!";
+                ResponseMessage = employee.Name + "'s details has deleted successfully !";
             }
             else
             {
                 ResponseMessage = "Failed to delete" + employee.Name + "'s details.";
             }
+            GetEmployeeDetails();
+        }
+        private bool CheckPostButtonEnable()
+        {                       
+            if(string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Email) || (!string.IsNullOrEmpty(Email) && !regexemail.IsMatch(Email)))
+            {
+                return false;
+            }
+            return true;
         }
       
     }

@@ -108,6 +108,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Controller\ApiController.cs" />
+    <Compile Include="Models\Enums.cs" />
     <Compile Include="Utilities\ApiUrls.cs" />
     <Compile Include="Utilities\JsonHelper.cs" />
     <Compile Include="ViewModels\EmployeeViewModel.cs" />

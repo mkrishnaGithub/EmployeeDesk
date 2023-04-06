@@ -24,7 +24,7 @@ namespace EmployeeDesk
         public MainWindow()
         {
             InitializeComponent();
-            this.DataContext = new EmployeeViewModel();            
+            new EmployeeViewModel();
         }
     }
 }
