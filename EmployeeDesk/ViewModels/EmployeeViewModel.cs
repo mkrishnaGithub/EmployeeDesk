@@ -22,6 +22,8 @@ namespace EmployeeDesk.ViewModels
 
         Regex regexemail = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
 
+        public int CurrentSelectedPage = 1;
+
         private List<Employee> _employees;
 
         public List<Employee> Employees
@@ -117,9 +119,54 @@ namespace EmployeeDesk.ViewModels
             get { return _isUpdateDeleteBtnEnable; }
             set { SetProperty(ref _isUpdateDeleteBtnEnable, value); }
         }
-
         #endregion
 
+        #region Pagination properties
+        public int _currentPage = 1;
+        public int CurrentPage
+        {
+            get { return _currentPage; }
+            set { SetProperty(ref _currentPage, value); }
+        }
+        public int _totalPages;
+        public int TotalPages
+        {
+            get { return _totalPages; }
+            set { SetProperty(ref _totalPages, value); }
+        }
+        private bool _isPrvsBtnEnable = false;
+
+        public bool IsPrvsBtnEnable
+        {
+            get { return _isPrvsBtnEnable; }
+            set { SetProperty(ref _isPrvsBtnEnable, value); }
+        }
+
+        private bool _isFirstBtnEnable = false;
+
+        public bool IsFirstBtnEnable
+        {
+            get { return _isFirstBtnEnable; }
+            set { SetProperty(ref _isFirstBtnEnable, value); }
+        }
+
+        private bool _isLastBtnEnable = true;
+
+        public bool IsLastBtnEnable
+        {
+            get { return _isLastBtnEnable; }
+            set { SetProperty(ref _isLastBtnEnable, value); }
+        }
+
+        private bool _isNextBtnEnable = true;
+
+        public bool IsNextBtnEnable
+        {
+            get { return _isNextBtnEnable; }
+            set { SetProperty(ref _isNextBtnEnable, value); }
+        }
+       
+        #endregion
         #region Validations
         public string Error { get { return null; } }
 
@@ -156,10 +203,16 @@ namespace EmployeeDesk.ViewModels
         public DelegateCommand<Employee> UpdateButtonClicked { get; set; }
         public DelegateCommand<Employee> DeleteButtonClicked { get; set; }
         public DelegateCommand DataGridRowSelected { get; set; }
-      
+
+        public DelegateCommand NextPageBtnClicked { get; set; }
+        public DelegateCommand PreviousPageBtnClicked { get; set; }
+        public DelegateCommand LastPageBtnClicked { get; set; }
+        public DelegateCommand FirstPageBtnClicked { get; set; }
+
+
         #endregion
 
-                 
+
         public EmployeeViewModel()
         {
             GetEmployeeDetails();
@@ -169,6 +222,11 @@ namespace EmployeeDesk.ViewModels
             PostButtonClick = new DelegateCommand(CreateEmployee);
             ShowRegistrationForm = new DelegateCommand(RegisterEmployee);
             DataGridRowSelected = new DelegateCommand(CheckForUpdateDeleteButton);
+
+            NextPageBtnClicked = new DelegateCommand(LoadNextPageData);
+            PreviousPageBtnClicked = new DelegateCommand(LoadPreviousPageData);
+            FirstPageBtnClicked = new DelegateCommand(LoadFirstPageData);
+            LastPageBtnClicked = new DelegateCommand(LoadLastPageData);
         }
 
 
@@ -189,8 +247,8 @@ namespace EmployeeDesk.ViewModels
         /// Get employee details  
         /// </summary>  
         public async void GetEmployeeDetails()
-        {
-            var employeeDetails = ApiController.GetData(ApiUrls.emplist);
+        {            
+            var employeeDetails = ApiController.GetData(ApiUrls.emplist+(CurrentSelectedPage > 0 ? "?page="+CurrentSelectedPage : ""));
             if (employeeDetails.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {                
                 var result = await employeeDetails.Result.Content.ReadAsStringAsync();
@@ -199,7 +257,31 @@ namespace EmployeeDesk.ViewModels
                     PropertyNameCaseInsensitive = true
                 };
                 var resp = JsonSerializer.Deserialize<EmployeeResponse>(result, options);
-                Employees = resp.data;
+                try
+                {
+                    if (CurrentSelectedPage == 1)
+                    {
+                        IsFirstBtnEnable = false; IsPrvsBtnEnable = false;
+                        IsNextBtnEnable = true; IsLastBtnEnable = true;
+                    }
+                    else if (CurrentSelectedPage == TotalPages)
+                    {
+                        IsFirstBtnEnable = true; IsPrvsBtnEnable = true;
+                        IsNextBtnEnable = false; IsLastBtnEnable = false;
+                    }
+                    else
+                    {
+                        IsFirstBtnEnable = true; IsPrvsBtnEnable = true;
+                        IsNextBtnEnable = true; IsLastBtnEnable = true;
+                    }
+                   CurrentPage = resp.meta!=null && resp.meta.pagination!=null ? resp.meta.pagination.page : 1;
+                   TotalPages = resp.meta != null && resp.meta.pagination != null ? resp.meta.pagination.pages : 0;
+                }
+                catch(Exception e)
+                {
+                    //TOODO
+                }
+                Employees = resp.data.OrderBy(x=>x.Id).ToList();
                 IsLoadData = true;
             }
         }
@@ -315,7 +397,35 @@ namespace EmployeeDesk.ViewModels
             }
             GetEmployeeDetails();
         }
+        #endregion
 
+        #region Pagination Command Methods
+        private void LoadNextPageData()
+        {
+            if (CurrentSelectedPage != TotalPages)
+            {
+                CurrentSelectedPage++;
+                GetEmployeeDetails();
+            }            
+        }
+        private void LoadPreviousPageData()
+        {
+            if (CurrentSelectedPage > 1)
+            {
+                CurrentSelectedPage--;
+                GetEmployeeDetails();
+            }
+        }
+        private void LoadLastPageData()
+        {
+            CurrentSelectedPage= TotalPages;
+            GetEmployeeDetails();
+        }
+        private void LoadFirstPageData()
+        {
+            CurrentSelectedPage=1;
+            GetEmployeeDetails();
+        }
         #endregion
 
         private bool CheckPostButtonEnable()
