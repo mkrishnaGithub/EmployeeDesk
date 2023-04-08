@@ -1,5 +1,5 @@
 # EmployeeDesk
-This application is mainly focused on managing employee's basic details.
+This application is mainly focused on managing employee's basic details with some basic operations like register new employe, update details, delete details etc.
 
 Buttons
 -------
@@ -11,8 +11,11 @@ Buttons
 
 DataGrid 
 ----------
-* To Edit any data in data grid to update, we need select the row and double click on the cell which we want to update, then finally we need to click 'Update' button to save the changes.
+* To modify the data in employee data grid, we need select the row and double click on the cell which we want to update, then text will appear in the cell.After modify the data we need to click 'Update' button to save the changes.
 
+Pagination
+----------
+In the data grid we have pagination option to load the next/previous/first/last page data.
 
 
 
