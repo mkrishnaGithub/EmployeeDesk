@@ -9,7 +9,7 @@
         <Setter Property="BorderBrush" Value="White"/>
         <Setter Property="Foreground" Value="White"/>
         <Setter Property="FontWeight" Value="Bold"/>
-        <Setter Property="Height" Value="25"/>
+        <Setter Property="Height" Value="30"/>
         <Setter Property="Width" Value="120"/>
     </Style>
     <Style TargetType="Button" x:Key="PaginationButtonStyle">
@@ -24,11 +24,17 @@
         <Setter Property="Margin" Value="5 0 5 0"/>
     </Style>
     <Style TargetType="Label" x:Key="HeaderLable">
-        <Setter Property="FontSize" Value="15"></Setter>
-        <Setter Property="Foreground" Value="#ff004e"></Setter>
+        <Setter Property="FontSize" Value="18"></Setter>
+        <Setter Property="Foreground" Value="#a84632"></Setter>
         <Setter Property="BorderThickness" Value="0.2"/>
         <Setter Property="BorderBrush" Value="Gray"/>
         <Setter Property="Margin" Value="0 0 0 20"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+
+    </Style>
+    <Style TargetType="Label" x:Key="FormLabel">
+        <Setter Property="FontSize" Value="12"></Setter>
+        <Setter Property="Margin" Value="0 0 20 0"/>
         <Setter Property="FontWeight" Value="Bold"/>
 
     </Style>

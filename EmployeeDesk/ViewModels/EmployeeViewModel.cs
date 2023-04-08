@@ -39,15 +39,7 @@ namespace EmployeeDesk.ViewModels
             get { return _selectedEmployee; }
             set { SetProperty(ref _selectedEmployee, value); }
         }
-
-        private bool _isLoadData;
-
-        public bool IsLoadData
-        {
-            get { return _isLoadData; }
-            set { SetProperty(ref _isLoadData, value); }
-        }
-
+       
      
         #region Employee Properties 
 
@@ -105,12 +97,12 @@ namespace EmployeeDesk.ViewModels
             get { return _isShowForm; }
             set { SetProperty(ref _isShowForm, value); }
         }
-        private bool _isPostBtnEnable=true;
+        private bool _isSaveBtnEnable=true;
 
-        public bool IsPostBtnEnable
+        public bool IsSaveBtnEnable
         {
-            get { return _isPostBtnEnable; }
-            set { SetProperty(ref _isPostBtnEnable, value); }
+            get { return _isSaveBtnEnable; }
+            set { SetProperty(ref _isSaveBtnEnable, value); }
         }
         private bool _isUpdateDeleteBtnEnable = false;
 
@@ -190,7 +182,7 @@ namespace EmployeeDesk.ViewModels
                         }
                         break;
                 }
-                IsPostBtnEnable = CheckPostButtonEnable();  //To enable the save button only when valid data exist
+                IsSaveBtnEnable = CheckPostButtonEnable();  //To enable the save button only when valid data exist
                 return result;
             }
         }
@@ -199,7 +191,7 @@ namespace EmployeeDesk.ViewModels
         #region ICommands
         public DelegateCommand GetButtonClicked { get; set; }
         public DelegateCommand ShowRegistrationForm { get; set; }
-        public DelegateCommand PostButtonClick { get; set; }
+        public DelegateCommand SaveButtonClick { get; set; }
         public DelegateCommand<Employee> UpdateButtonClicked { get; set; }
         public DelegateCommand<Employee> DeleteButtonClicked { get; set; }
         public DelegateCommand DataGridRowSelected { get; set; }
@@ -219,7 +211,7 @@ namespace EmployeeDesk.ViewModels
             GetButtonClicked = new DelegateCommand(GetEmployeeDetails);
             UpdateButtonClicked = new DelegateCommand<Employee>(UpdateEmployeeDetails);
             DeleteButtonClicked = new DelegateCommand<Employee>(DeleteEmployee);
-            PostButtonClick = new DelegateCommand(CreateEmployee);
+            SaveButtonClick = new DelegateCommand(CreateEmployee);
             ShowRegistrationForm = new DelegateCommand(RegisterEmployee);
             DataGridRowSelected = new DelegateCommand(CheckForUpdateDeleteButton);
 
@@ -257,32 +249,35 @@ namespace EmployeeDesk.ViewModels
                     PropertyNameCaseInsensitive = true
                 };
                 var resp = JsonSerializer.Deserialize<EmployeeResponse>(result, options);
-                try
+                if (resp != null && resp.data != null && resp.data.Count > 0)
                 {
-                    if (CurrentSelectedPage == 1)
+                    try
                     {
-                        IsFirstBtnEnable = false; IsPrvsBtnEnable = false;
-                        IsNextBtnEnable = true; IsLastBtnEnable = true;
+                        if (CurrentSelectedPage == 1)
+                        {
+                            IsFirstBtnEnable = false; IsPrvsBtnEnable = false;
+                            IsNextBtnEnable = true; IsLastBtnEnable = true;
+                        }
+                        else if (CurrentSelectedPage == TotalPages)
+                        {
+                            IsFirstBtnEnable = true; IsPrvsBtnEnable = true;
+                            IsNextBtnEnable = false; IsLastBtnEnable = false;
+                        }
+                        else
+                        {
+                            IsFirstBtnEnable = true; IsPrvsBtnEnable = true;
+                            IsNextBtnEnable = true; IsLastBtnEnable = true;
+                        }
+                        CurrentPage = resp.meta != null && resp.meta.pagination != null ? resp.meta.pagination.page : 1;
+                        TotalPages = resp.meta != null && resp.meta.pagination != null ? resp.meta.pagination.pages : 0;
                     }
-                    else if (CurrentSelectedPage == TotalPages)
+                    catch (Exception e)
                     {
-                        IsFirstBtnEnable = true; IsPrvsBtnEnable = true;
-                        IsNextBtnEnable = false; IsLastBtnEnable = false;
+                        //TOODO
                     }
-                    else
-                    {
-                        IsFirstBtnEnable = true; IsPrvsBtnEnable = true;
-                        IsNextBtnEnable = true; IsLastBtnEnable = true;
-                    }
-                   CurrentPage = resp.meta!=null && resp.meta.pagination!=null ? resp.meta.pagination.page : 1;
-                   TotalPages = resp.meta != null && resp.meta.pagination != null ? resp.meta.pagination.pages : 0;
+                    Employees = resp.data.OrderBy(x => x.Id).ToList();                     
                 }
-                catch(Exception e)
-                {
-                    //TOODO
-                }
-                Employees = resp.data.OrderBy(x=>x.Id).ToList();
-                IsLoadData = true;
+                
             }
         }
 
