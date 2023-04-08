@@ -19,7 +19,7 @@
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="BorderBrush" Value="White"/>
         <Setter Property="Foreground" Value="White"/>
-        <Setter Property="Height" Value="25"/>
+        <Setter Property="Height" Value="28"/>
         <Setter Property="Width" Value="50"/>
         <Setter Property="Margin" Value="5 0 5 0"/>
     </Style>
@@ -39,9 +39,15 @@
 
     </Style>
     <Style TargetType="DataGridColumnHeader" x:Key="DataGridHeaderStyle">
-        <Setter Property="FontSize" Value="14"/>
-        <Setter Property="HorizontalAlignment" Value="Center"/>
-        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontWeight"  Value="Bold" />
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="BorderBrush" Value="Black"/>
+        <Setter Property="BorderThickness" Value="0,0,1,0"/>
+        <Setter Property="Background" Value="#4285f4"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
     </Style>
     <Style TargetType="DataGrid" x:Key="DataGridStyle">
         <Setter Property="AlternatingRowBackground" Value="#a6e9ff"/>

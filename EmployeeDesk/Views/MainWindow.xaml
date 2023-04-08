@@ -140,7 +140,7 @@
                           AutoGenerateColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn x:Name="ColumnName"
-                                            Header="Name" 
+                                            Header="Employee Name" 
                                             HeaderStyle="{StaticResource DataGridHeaderStyle}"                                   
                                             Binding="{Binding Name}" 
                                             Width="2*"/>
