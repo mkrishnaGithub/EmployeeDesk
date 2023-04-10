@@ -19,8 +19,10 @@ In the data grid we have pagination option to load the next/previous/first/last 
 
 
 
+
 Packages Installed
-=----------------
+----------------
+
 1.MVVM Prism
 Prism provides an implementation of a collection of design patterns that are helpful in writing well structured and maintainable XAML applications, including MVVM, dependency injection, commanding, event aggregation, and more.
 
