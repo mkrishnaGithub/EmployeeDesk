@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -36,6 +37,17 @@ namespace EmployeeDesk.Utilities
                 js.Serialize(jtw, value);
                 jtw.Flush();
             }
+        }
+        public static HttpClient GetHttpClient(string url)
+        {
+            HttpClient client = new HttpClient();
+            client.BaseAddress = new Uri(ApiUrls.baseURI + url);
+            client.Timeout = TimeSpan.FromSeconds(900);
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConfigurationManager.AppSettings["apiToken"]);
+            return client;
+
         }
     }
 }

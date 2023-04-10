@@ -21,19 +21,28 @@ namespace EmployeeDesk.Controller
             {
 
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-                string apiUrl = ApiUrls.baseURI + url;
-                using (HttpClient client = new HttpClient())
+                //string apiUrl = ApiUrls.baseURI + url;
+                //using (HttpClient client = new HttpClient())
+                //{
+                //    client.BaseAddress = new Uri(apiUrl);
+                //    client.Timeout = TimeSpan.FromSeconds(900);
+                //    client.DefaultRequestHeaders.Accept.Clear();
+                //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                //    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConfigurationManager.AppSettings["apiToken"]);
+                //    var response = client.GetAsync(apiUrl);
+                //    response.Wait();
+                //    return response;
+
+                //}
+                
+                using(HttpClient client= JsonHelper.GetHttpClient(url))
                 {
-                    client.BaseAddress = new Uri(apiUrl);
-                    client.Timeout = TimeSpan.FromSeconds(900);
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConfigurationManager.AppSettings["apiToken"]);
-                    var response = client.GetAsync(apiUrl);
+                    var response = client.GetAsync(ApiUrls.baseURI + url);
                     response.Wait();
                     return response;
-
                 }
+
+
             }
             catch (Exception ex)
             {
@@ -47,25 +56,18 @@ namespace EmployeeDesk.Controller
         /// <param name="url"></param>
         /// <param name="model"></param>
         /// <returns></returns>
-        public static Task<HttpResponseMessage> PostData<T>(string url, T model) 
+        public static Task<HttpResponseMessage> PostData<T>(string url, T model)
         {
             try
             {
-                using (var client = new HttpClient())
+                using (HttpClient client = JsonHelper.GetHttpClient(url))                
                 using (var request = new HttpRequestMessage(HttpMethod.Post, ApiUrls.baseURI + url))
                 using (var httpContent = JsonHelper.CreateHttpContent(model))
-                {
-                    string apiUrl = ApiUrls.baseURI + url;
-                    client.BaseAddress = new Uri(apiUrl);
-                    client.Timeout = TimeSpan.FromSeconds(900);
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConfigurationManager.AppSettings["apiToken"]);
-                    var response = client.PostAsync(apiUrl, httpContent);
+                {                    
+                    var response = client.PostAsync(ApiUrls.baseURI + url, httpContent);
                     response.Wait();
                     return response;
                 }
-
             }
             catch (Exception ex)
             {
@@ -85,17 +87,11 @@ namespace EmployeeDesk.Controller
         {
             try
             {
-                using (var client = new HttpClient())
+                using (HttpClient client = JsonHelper.GetHttpClient(url))
                 using (var request = new HttpRequestMessage(HttpMethod.Post, ApiUrls.baseURI + url))
                 using (var httpContent = JsonHelper.CreateHttpContent(model))
-                {
-                    string apiUrl = ApiUrls.baseURI + url;
-                    client.BaseAddress = new Uri(apiUrl);
-                    client.Timeout = TimeSpan.FromSeconds(900);
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", ConfigurationManager.AppSettings["apiToken"]);
-                    var response = client.PutAsync(apiUrl, httpContent);
+                {                   
+                    var response = client.PutAsync(ApiUrls.baseURI + url, httpContent);
                     response.Wait();
                     return response;
                 }
@@ -114,15 +110,10 @@ namespace EmployeeDesk.Controller
         public static Task<HttpResponseMessage> DeleteData(string url)
         {
             try
-            {
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            {               
                 string apiUrl = ApiUrls.baseURI + url;
-                using (HttpClient client = new HttpClient())
-                {
-                    client.BaseAddress = new Uri(apiUrl);
-                    client.Timeout = TimeSpan.FromSeconds(900);
-                    client.DefaultRequestHeaders.Accept.Clear();
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                using (HttpClient client = JsonHelper.GetHttpClient(url))
+                {                   
                     var response = client.DeleteAsync(apiUrl);
                     response.Wait();
                     return response;
@@ -132,7 +123,7 @@ namespace EmployeeDesk.Controller
             {
                 throw;
             }
-        }
+        }        
 
     }
 }
